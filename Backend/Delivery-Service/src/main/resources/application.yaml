@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: delivery-service
+server:
+  port: 8086

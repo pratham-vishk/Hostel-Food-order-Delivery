@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: authorization-service
+server:
+  port: 8081
