@@ -1,6 +1,7 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
 	 id 'java'
-    id 'org.openapi.generator' version '6.6.0'
+	id 'org.openapi.generator' version '7.3.0'
 	id 'org.springframework.boot' version '3.5.5'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -22,6 +23,23 @@ java {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
+tasks.named("openApiGenerate", GenerateTask) {
+	generatorName.set("spring")
+	inputSpec.set("$rootDir/src/main/resources/api/auth-service.yaml")
+	outputDir.set("$buildDir/generated")
+	apiPackage.set("com.foodapp.cart.api")
+	modelPackage.set("com.foodapp.cart.model")
+	configOptions.set([
+			interfaceOnly: "true",
+			useTags      : "true",
+			dateLibrary  : "java8",
+        useJakartaEe : "true"
+	])
+}
+tasks.named("compileJava") {
+    dependsOn("openApiGenerate")
+}
+
 
 configurations {
 	compileOnly {
