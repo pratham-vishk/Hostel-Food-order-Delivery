@@ -1,5 +1,5 @@
 spring:
   application:
     name: authorization-service
-server:
-  port: 8081
+  config:
+    import: "optional:configserver:http://config-server:8888"

@@ -1,0 +1,9 @@
+spring:
+  config:
+    import: "classpath:/cassandra.yml"
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: "*"
+

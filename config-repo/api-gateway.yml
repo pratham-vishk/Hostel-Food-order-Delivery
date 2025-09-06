@@ -1,0 +1,42 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/orders/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/payments/**
+        - id: delivery-service
+          uri: lb://delivery-service
+          predicates:
+            - Path=/deliveries/**
+        - id: customer-service
+          uri: lb://customer-service
+          predicates:
+            - Path=/customers/**
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/carts/**
+        - id: catalog-service
+          uri: lb://catalog-service
+          predicates:
+            - Path=/catalogs/**
+        - id: authorization-service
+          uri: lb://authorization-service
+          predicates:
+            - Path=/auth/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://service-registry:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+server:
+  port: 8080

@@ -1,5 +1,5 @@
 spring:
   application:
     name: service-registry
-server:
-  port: 8761
+  config:
+    import: "optional:configserver:http://config-server:8888"
