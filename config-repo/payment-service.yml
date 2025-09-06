@@ -1,12 +1,14 @@
 spring:
   application:
     name: payment-service
+  security:
+    user:
+      name: admin
+      password: admin
+management:
+  security:
+    enabled: false
 
-  eureka:
-    client:
-      service-url:
-        defaultZone: http://service-registry:8761/eureka/
-      register-with-eureka: true
-      fetch-registry: true
+  
 server:
   port: 8088

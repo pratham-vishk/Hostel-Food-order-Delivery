@@ -1,9 +1,19 @@
 spring:
   config:
-    import: "classpath:/cassandra.yml"
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: "*"
+    import: optional:configserver:cassandra.yml
+  profiles:
+    active: local
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true

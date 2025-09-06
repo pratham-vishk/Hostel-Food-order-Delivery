@@ -1,9 +1,14 @@
-
 spring:
   application:
     name: config-server
-  config:
-    import: "optional:configserver:http://config-server:8888"
+#  cloud:
+#    config:
+#      server:
+#        native:
+#          search-locations: file:///C:/Users/Pratham/IdeaProjects/Hostel-Food-Delivery/config-repo
+#
+#
+##spring:
   cloud:
     config:
       server:
@@ -11,3 +16,5 @@ spring:
           uri: https://github.com/pratham-vishk/Hostel-Food-order-Delivery.git
           default-label: master
           clone-on-start: true
+server:
+  port: 8888

@@ -1,13 +1,12 @@
 spring:
   application:
     name: authorization-service
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://service-registry:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-
+  security:
+    user:
+      name: admin
+      password: admin
+management:
+  security:
+    enabled: false
 server:
   port: 8081

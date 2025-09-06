@@ -5,10 +5,12 @@ services:
     ports:
       - "8761:8761"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      test: ["CMD", "curl", "-f", "http://service-registry:8761/actuator/health"]
       interval: 10s
       timeout: 10s
       retries: 10
+    networks:
+      - app-network
 
   config-server:
     build: ./Backend/config-Server
@@ -19,6 +21,8 @@ services:
       - ./config-repo:/app/config-repo
     depends_on:
       - service-registry
+    networks:
+      - app-network
 
   api-gateway:
     build: ./Backend/API-Gateway
@@ -30,6 +34,8 @@ services:
         condition: service_healthy
       config-server:
         condition: service_started
+    networks:
+      - app-network
 
   authorization-service:
     build: ./Backend/Authorization-Service
@@ -41,6 +47,8 @@ services:
         condition: service_healthy
       config-server:
         condition: service_started
+    networks:
+      - app-network
 
   cart-service:
     build: ./Backend/Cart-Service
@@ -52,6 +60,9 @@ services:
         condition: service_healthy
       config-server:
         condition: service_started
+    networks:
+      - app-network
+
   catalog-service:
     build: ./Backend/Catalog-Service
     container_name: catalog-service
@@ -62,6 +73,8 @@ services:
         condition: service_healthy
       config-server:
         condition: service_started
+    networks:
+      - app-network
 
   customer-service:
     build: ./Backend/Customer-Service
@@ -73,6 +86,8 @@ services:
         condition: service_healthy
       config-server:
         condition: service_started
+    networks:
+      - app-network
 
   delivery-service:
     build: ./Backend/Delivery-Service
@@ -84,6 +99,8 @@ services:
         condition: service_healthy
       config-server:
         condition: service_started
+    networks:
+      - app-network
 
   order-service:
     build: ./Backend/Order-Service
@@ -95,6 +112,8 @@ services:
         condition: service_healthy
       config-server:
         condition: service_started
+    networks:
+      - app-network
 
   payment-service:
     build: ./Backend/Payment-Service
@@ -106,6 +125,9 @@ services:
         condition: service_healthy
       config-server:
         condition: service_started
+    networks:
+      - app-network
+
   frontend:
     build: ./Frontend
     container_name: frontend
@@ -113,6 +135,8 @@ services:
       - "3000:80"
     depends_on:
       - api-gateway
+    networks:
+      - app-network
 
   cassandra:
     image: bitnami/cassandra:4.1
@@ -124,4 +148,8 @@ services:
       - CASSANDRA_DC=datacenter1
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
       - CASSANDRA_START_RPC=true
+    networks:
+      - app-network
 
+networks:
+  app-network:

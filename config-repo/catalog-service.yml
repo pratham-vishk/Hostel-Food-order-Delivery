@@ -2,11 +2,5 @@ spring:
   application:
     name: catalog-service
 
-  eureka:
-    client:
-      service-url:
-        defaultZone: http://service-registry:8761/eureka/
-      register-with-eureka: true
-      fetch-registry: true
 server:
   port: 8083
