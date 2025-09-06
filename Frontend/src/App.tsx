@@ -66,6 +66,7 @@ function AppContent() {
   const [currentTab, setCurrentTab] = useState<
     "orders" | "monthly"
   >("orders");
+  const [selectedCategory, setSelectedCategory] = useState('breakfast');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
@@ -77,6 +78,14 @@ function AppContent() {
   ] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Food categories
+  const foodCategories = [
+    { id: 'breakfast', name: 'Breakfast', emoji: '🌅', time: '7-10 AM' },
+    { id: 'lunch', name: 'Lunch', emoji: '🍽️', time: '12-3 PM' },
+    { id: 'dinner', name: 'Dinner', emoji: '🌙', time: '7-10 PM' },
+    { id: 'snacks', name: 'Snacks', emoji: '🍿', time: '4-6 PM' }
+  ];
 
   // Load user from localStorage on app start and validate token
   useEffect(() => {
@@ -540,6 +549,95 @@ function AppContent() {
         </motion.div>
       </section>
 
+      {/* Food Categories Navigation */}
+      <section className="container mx-auto px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-center mb-8"
+        >
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <ChefHat className="h-6 w-6 text-primary" />
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+              Choose Your Meal Category
+            </h3>
+            <ChefHat className="h-6 w-6 text-primary" />
+          </div>
+          <p className="text-muted-foreground">
+            Browse our carefully crafted menu by meal time
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="flex justify-center"
+        >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl w-full">
+            {foodCategories.map((category, index) => (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.6 + index * 0.1 }}
+                whileHover={{ y: -4 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <button
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`group relative overflow-hidden rounded-2xl p-6 transition-all duration-300 transform hover:scale-105 modern-shadow w-full ${
+                    selectedCategory === category.id
+                      ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white scale-105'
+                      : 'bg-card/50 backdrop-blur-sm hover:bg-card/80'
+                  }`}
+                >
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
+                <motion.div
+                  className="relative z-10 flex flex-col items-center gap-3"
+                  animate={{ scale: selectedCategory === category.id ? 1.1 : 1 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <motion.span
+                    className="text-4xl"
+                    animate={{ 
+                      rotate: selectedCategory === category.id ? [0, -10, 10, 0] : 0 
+                    }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {category.emoji}
+                  </motion.span>
+                  
+                  <div className="text-center">
+                    <div className="font-bold text-lg mb-1">{category.name}</div>
+                    <div className={`text-sm ${
+                      selectedCategory === category.id 
+                        ? 'text-white/80' 
+                        : 'text-muted-foreground'
+                    }`}>
+                      {category.time}
+                    </div>
+                  </div>
+                </motion.div>
+
+                {selectedCategory === category.id && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute top-2 right-2 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center"
+                  >
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  </motion.div>
+                )}
+                </button>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
       {/* Main Content */}
       <main className="container mx-auto px-4 pb-8">
         <Tabs
@@ -579,7 +677,12 @@ function AppContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <FoodMenu onAddToCart={addToCart} />
+              <FoodMenu 
+                onAddToCart={addToCart} 
+                cartItems={cartItems}
+                onUpdateQuantity={updateQuantity}
+                selectedCategory={selectedCategory}
+              />
             </motion.div>
           </TabsContent>
 

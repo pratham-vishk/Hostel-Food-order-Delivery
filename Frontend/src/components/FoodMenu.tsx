@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { FoodItem } from '../App';
+import { FoodItem, CartItem } from '../App';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { Plus, Clock, Star, Flame, Leaf, ChefHat } from 'lucide-react';
+import { Plus, Clock, Star, Flame, Leaf, ChefHat, Minus } from 'lucide-react';
 
 interface FoodMenuProps {
   onAddToCart: (item: FoodItem) => void;
+  cartItems: CartItem[];
+  onUpdateQuantity: (itemId: string, quantity: number) => void;
 }
 
 const menuItems: FoodItem[] = [
@@ -160,18 +161,37 @@ const menuItems: FoodItem[] = [
   }
 ];
 
-const categories = [
-  { id: 'breakfast', name: 'Breakfast', emoji: '🌅', time: '7-10 AM' },
-  { id: 'lunch', name: 'Lunch', emoji: '🍽️', time: '12-3 PM' },
-  { id: 'dinner', name: 'Dinner', emoji: '🌙', time: '7-10 PM' },
-  { id: 'snacks', name: 'Snacks', emoji: '🍿', time: '4-6 PM' }
-];
 
-export function FoodMenu({ onAddToCart }: FoodMenuProps) {
-  const [selectedCategory, setSelectedCategory] = useState('breakfast');
 
+export function FoodMenu({ onAddToCart, cartItems, onUpdateQuantity, selectedCategory }: {
+  onAddToCart: (item: FoodItem) => void;
+  cartItems: CartItem[];
+  onUpdateQuantity: (itemId: string, quantity: number) => void;
+  selectedCategory: string;
+}) {
   const getItemsByCategory = (category: string) => {
     return menuItems.filter(item => item.category === category);
+  };
+
+  const getItemQuantity = (itemId: string) => {
+    const cartItem = cartItems.find(item => item.id === itemId);
+    return cartItem ? cartItem.quantity : 0;
+  };
+
+  const handleIncrement = (item: FoodItem) => {
+    const currentQuantity = getItemQuantity(item.id);
+    if (currentQuantity === 0) {
+      onAddToCart(item);
+    } else {
+      onUpdateQuantity(item.id, currentQuantity + 1);
+    }
+  };
+
+  const handleDecrement = (itemId: string) => {
+    const currentQuantity = getItemQuantity(itemId);
+    if (currentQuantity > 0) {
+      onUpdateQuantity(itemId, currentQuantity - 1);
+    }
   };
 
   return (
@@ -191,45 +211,13 @@ export function FoodMenu({ onAddToCart }: FoodMenuProps) {
         <p className="text-lg text-muted-foreground">Crafted with passion, served with excellence</p>
       </motion.div>
 
-      <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-12 bg-card/50 backdrop-blur-sm p-2 rounded-2xl modern-shadow max-w-4xl mx-auto">
-            {categories.map((category, index) => (
-              <TabsTrigger 
-                key={category.id} 
-                value={category.id} 
-                className="flex flex-col items-center gap-1 rounded-xl data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-500 data-[state=active]:text-white transition-all duration-300 py-4 px-2"
-              >
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="text-2xl"
-                >
-                  {category.emoji}
-                </motion.span>
-                <div className="text-center">
-                  <div className="font-semibold">{category.name}</div>
-                  <div className="text-xs opacity-75">{category.time}</div>
-                </div>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </motion.div>
-
-        {categories.map(category => (
-          <TabsContent key={category.id} value={category.id}>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
-              {getItemsByCategory(category.id).map((item, index) => (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+      >
+        {getItemsByCategory(selectedCategory).map((item, index) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -308,27 +296,75 @@ export function FoodMenu({ onAddToCart }: FoodMenuProps) {
                       </CardDescription>
                     </CardHeader>
                     
-                    <CardFooter className="pt-0">
-                      <motion.div className="w-full">
-                        <Button
-                          onClick={() => onAddToCart(item)}
-                          disabled={!item.available}
-                          className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl py-4 font-bold text-lg"
+                    <CardFooter className="pt-0 flex flex-col gap-4">
+                      {getItemQuantity(item.id) === 0 ? (
+                        <motion.div 
+                          className="w-full"
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          <Plus className="h-5 w-5" />
-                          Add to Cart
-                        </Button>
-                      </motion.div>
+                          <Button
+                            onClick={() => handleIncrement(item)}
+                            disabled={!item.available}
+                            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl py-4 font-bold text-lg"
+                          >
+                            <Plus className="h-5 w-5" />
+                            Add to Cart
+                          </Button>
+                        </motion.div>
+                      ) : (
+                        <motion.div 
+                          className="w-full"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <div className="flex items-center justify-between bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-2xl p-2 border border-orange-200 dark:border-orange-800">
+                            <Button
+                              onClick={() => handleDecrement(item.id)}
+                              variant="ghost"
+                              size="sm"
+                              className="h-12 w-12 rounded-xl bg-white dark:bg-gray-800 hover:bg-orange-50 dark:hover:bg-orange-900/50 shadow-md"
+                            >
+                              <Minus className="h-5 w-5 text-orange-600" />
+                            </Button>
+                            
+                            <div className="flex flex-col items-center gap-1">
+                              <span className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                                {getItemQuantity(item.id)}
+                              </span>
+                              <span className="text-xs text-muted-foreground font-medium">
+                                in cart
+                              </span>
+                            </div>
+                            
+                            <Button
+                              onClick={() => handleIncrement(item)}
+                              variant="ghost"
+                              size="sm"
+                              className="h-12 w-12 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white shadow-md"
+                            >
+                              <Plus className="h-5 w-5" />
+                            </Button>
+                          </div>
+                          
+                          <motion.div 
+                            className="text-center mt-2"
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <span className="text-sm font-bold text-green-600 dark:text-green-400">
+                              ₹{(item.price * getItemQuantity(item.id)).toFixed(0)} total
+                            </span>
+                          </motion.div>
+                        </motion.div>
+                      )}
                     </CardFooter>
                   </Card>
                 </motion.div>
               ))}
-            </motion.div>
-          </TabsContent>
-        ))}
-      </Tabs>
+      </motion.div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
@@ -115,6 +115,8 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
       await loadDashboardData();
     } catch (error) {
       console.error('Failed to approve registration:', error);
+      // Show user-friendly error message instead of just logging
+      alert('Failed to approve registration. Please try again.');
     }
   };
 
@@ -124,6 +126,8 @@ export function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
       await loadDashboardData();
     } catch (error) {
       console.error('Failed to reject registration:', error);
+      // Show user-friendly error message instead of just logging
+      alert('Failed to reject registration. Please try again.');
     }
   };
 
