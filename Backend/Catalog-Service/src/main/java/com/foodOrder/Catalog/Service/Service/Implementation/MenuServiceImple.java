@@ -3,7 +3,6 @@ package com.foodOrder.Catalog.Service.Service.Implementation;
 import com.foodOrder.Catalog.Service.Repository.MenuRepository;
 import com.foodOrder.Catalog.Service.Service.MenuService;
 import com.foodOrder.Catalog.Service.Model.Item;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,16 +23,16 @@ public class MenuServiceImple implements MenuService {
 
     @Override
     public Item getItemById(String id) {
-        return null;
+        return this.menuRepository.findById(id).orElse(null);
     }
 
     @Override
     public Void updateItem(String id, Item item) {
-        return null;
+        return this.updateItem(id, item);
     }
 
     @Override
     public Void addItem(Item item) {
-        return null;
+        return this.addItem(item);
     }
 }

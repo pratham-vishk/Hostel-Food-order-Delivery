@@ -1,24 +1,29 @@
 package com.foodOrder.Catalog.Service.Model;
 
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Table;
+import org.springframework.data.annotation.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table("item")
+@Table(name = "item")
 public class Item {
 
-    @PrimaryKey
-    String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    String name;
-    String description;
-    Float price;
+    private String name;
+    private String description;
+    private Float price;
 }
