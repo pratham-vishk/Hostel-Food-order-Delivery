@@ -138,23 +138,18 @@ services:
     networks:
       - app-network
 
-  postgres:
-    image: postgres:15
-    container_name: postgres
+  cassandra:
+    image: bitnami/cassandra:4.1
+    container_name: cassandra
     ports:
-      - "5432:5432"
+      - "9042:9042"
     environment:
-      POSTGRES_DB: foodapp
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - CASSANDRA_CLUSTER_NAME=FoodAppCluster
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_START_RPC=true
     networks:
       - app-network
 
-volumes:
-  postgres-data:
-
 networks:
   app-network:
-    driver: bridge
