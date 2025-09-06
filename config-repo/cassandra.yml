@@ -1,8 +1,0 @@
-spring:
-  data:
-    cassandra:
-      contact-points: cassandra
-      port: 9042
-      keyspace-name: foodapp
-      local-datacenter: datacenter1
-      schema-action: create-if-not-exists

@@ -2,4 +2,5 @@ spring:
   application:
     name: customer-service
   config:
-    import: "optional:configserver:http://config-server:8888"
+        import: configserver:http://localhost:8888
+#    import: configserver:http://config-server:8888

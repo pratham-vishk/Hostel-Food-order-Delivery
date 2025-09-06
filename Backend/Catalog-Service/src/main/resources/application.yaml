@@ -1,5 +1,6 @@
 spring:
   application:
     name: catalog-service
-  profiles:
-    active: docker
+  config:
+    import: configserver:http://localhost:8888
+#    import: configserver:http://config-server:8888

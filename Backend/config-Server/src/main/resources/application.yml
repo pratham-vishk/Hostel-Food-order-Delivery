@@ -1,14 +1,6 @@
 spring:
   application:
     name: config-server
-#  cloud:
-#    config:
-#      server:
-#        native:
-#          search-locations: file:///C:/Users/Pratham/IdeaProjects/Hostel-Food-Delivery/config-repo
-#
-#
-##spring:
   cloud:
     config:
       server:
@@ -16,5 +8,6 @@ spring:
           uri: https://github.com/pratham-vishk/Hostel-Food-order-Delivery.git
           default-label: master
           clone-on-start: true
+          search-paths: config-repo
 server:
   port: 8888
